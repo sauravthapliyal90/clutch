@@ -10,7 +10,7 @@ import { Role } from "../generated/prisma/enums.js";
 import { env } from "../config/env.js";
 
 export interface TokenPayload {
-  userId: string;
+  sub: string;
   role: Role;
 }
 
