@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import {authService} from './auth.services'
+import { logger } from "@config/logger";
 
 export const authController = {
     async requestOtp(req: Request, res: Response) {
@@ -14,7 +15,9 @@ export const authController = {
     }, 
     async completeProfile(req: Request, res: Response){
         const header = req.headers.authorization;
+        logger.info(`header ${header}`);
         const pendingProfileToken = header?.startsWith('Bearer') ? header.slice(7) : '';
+        logger.info(`pendingProfileToken "${pendingProfileToken}"`);
         const token = await authService.completeProfile(pendingProfileToken, req.body.name, req.body.email);
         res.status(200).json(token);
     },

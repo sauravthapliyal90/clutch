@@ -13,15 +13,15 @@ import {
 
 const router = Router();
 
-router.post('/otp/request', otpRequestRateLimiter, validate(requestOtpSchema));
+router.post('/otp/request', otpRequestRateLimiter, validate(requestOtpSchema), authController.requestOtp);
 
-router.post('/otp/verify', validate(verifyOtpSchema));
+router.post('/otp/verify', validate(verifyOtpSchema), authController.verifyOtp);
 
-router.post('/complete-profile', validate(completeProfileSchema));
+router.post('/complete-profile', validate(completeProfileSchema), authController.completeProfile);
 
-router.post('/refresh', validate(refreshSchema));
+router.post('/refresh', validate(refreshSchema), authController.refresh);
 
 // Admin-only: separate credential type, separate table, never otp
-router.post('/admin/login', validate(adminLoginSchema));
+router.post('/admin/login', validate(adminLoginSchema), authController.adminLogin);
 
 export default router;
