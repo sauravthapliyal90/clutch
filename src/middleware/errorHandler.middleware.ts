@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { AppError } from "../shared/error/AppError.js";
+import { AppError } from "../shared/error/ApiError.js";
 import { logger } from "../config/logger.js";
 import { env } from "../config/env.js";
 

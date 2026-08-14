@@ -1,6 +1,8 @@
 import {prisma} from "../../config/db"
 import { hashToken } from "@utils/jwt";
 
+type RefreshTokenOwner = { userId: string } | { adminId: string };
+
 export const authRepository = {
     findUserByPhone(phone: string) {
         return prisma.user.findUnique({where: {phone}, include: { hostProfile: true }})
@@ -11,10 +13,11 @@ export const authRepository = {
     completeProfile(userId: string, name: string, email: string){
         return prisma.user.update({where: {id: userId} , data: {name, email}})
     },
-    storeRefreshtoken(userId: string, refreshToken: string, expiresAt: Date ){
-        return prisma.refreshToken.create({
-            data: {userId, tokenHash: hashToken(refreshToken), expiresAt}})
-    },
+   async storeRefreshToken(owner: RefreshTokenOwner, refreshToken: string, expiresAt: Date) {
+    return prisma.refreshToken.create({
+      data: { ...owner, tokenHash: hashToken(refreshToken), expiresAt },
+    });
+  },
     findAdminByUsername(username: string){
         return prisma.admin.findUnique({where: {username}})
     },

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
-import { BadRequestError } from '../shared/error/AppError';
+import { BadRequestError } from '../shared/error/ApiError';
 
 type Target = 'body' | 'query' | 'params';
 

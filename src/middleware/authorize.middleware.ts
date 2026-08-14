@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ForbiddenError, UnauthorizedError } from '../shared/error/AppError.js';
+import { ForbiddenError, UnauthorizedError } from '../shared/error/ApiError.js';
 import { RoleName } from '@shared/constants/roles.js';
 
 export function authorize(allowedRoles: RoleName[]){

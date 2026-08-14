@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/db.js';
-import { ForbiddenError, NotFoundError, UnauthorizedError } from '../shared/error/AppError.js';
+import { ForbiddenError, NotFoundError, UnauthorizedError } from '../shared/error/ApiError.js';
 import { ROLES } from '../shared/constants/roles.js';
 
 export async function ownsMeetOrIsAdmin(

@@ -1,4 +1,4 @@
-import { NotFoundError, UnauthorizedError } from "@shared/error/AppError"
+import { NotFoundError, UnauthorizedError } from "@shared/error/ApiError"
 import { Request, Response } from 'express';
 import {usersService} from './users.service'
 

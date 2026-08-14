@@ -1,4 +1,4 @@
-import { NotFoundError } from "@shared/error/AppError"
+import { NotFoundError } from "@shared/error/ApiError"
 import { usersRepository } from "./users.repository"
 import { toUserDto } from "./users.dto"
 import {UpdateProfileInput} from './users.type'

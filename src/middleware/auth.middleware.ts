@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express';
 import {verifyAccessToken} from '../utils/jwt.js';
-import {UnauthorizedError} from '../shared/error/AppError.js';
+import {UnauthorizedError} from '../shared/error/ApiError.js';
 import type {RoleName} from '../shared/constants/roles.js';
 
 declare global{
@@ -21,7 +21,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
     const token = authHeader.split(' ')[1];
     try{
         const payload = verifyAccessToken(token);
-        req.user = {id: payload.userId, role: payload.role};
+        req.user = {id: payload.sub, role: payload.role};
     }catch(err){
         throw new UnauthorizedError('Invalid or expired token');
     }

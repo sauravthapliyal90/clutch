@@ -1,6 +1,6 @@
 import { storeOtp, canRequestOtp, verifyOtp } from "@shared/otp/otpStore";
 import { generateOtp } from "@utils/otp"
-import { BadRequestError, TooManyRequestsError, UnauthorizedError } from "@shared/error/AppError";
+import { BadRequestError, TooManyRequestsError, UnauthorizedError } from "@shared/error/ApiError";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "@utils/jwt";
 import { authRepository } from "./auth.repository";
 import { env } from "@config/env";
@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 import { verifyPassword } from "@utils/hash";
 import { ROLES } from '../../shared/constants/roles';
 import { logger } from "@config/logger";
-import { smsProvider } from "model/notifications/sms.provider";
+import { smsProvider } from "@modules/notifications/sms.provider";
 
 
 
@@ -94,16 +94,17 @@ async function adminLogin(username: string, password: string) {
    return issueTokenPair(admin.id, ROLES.ADMIN)
 }
 
-async function issueTokenPair(userId: string, role: string) {
-   const accessToken = generateAccessToken({ sub: userId, role: role as any })
-   const refreshToken = generateRefreshToken({ sub: userId, role: role as any })
-   
+async function issueTokenPair(ownerId: string, role: string) {
+  const accessToken = generateAccessToken({ sub: ownerId, role: role as any });
+  const refreshToken = generateRefreshToken({ sub: ownerId, role: role as any });
 
-   const decoded = jwt.decode(refreshToken) as { exp: number };
-   logger.info(`decode ${decoded}`)
-   await authRepository.storeRefreshtoken(userId, refreshToken, new Date(decoded.exp * 1000))
- 
-   return { accessToken, refreshToken }
+  const decoded = jwt.decode(refreshToken) as { exp: number };
+  const expiresAt = new Date(decoded.exp * 1000);
+
+  const owner = role === ROLES.ADMIN ? { adminId: ownerId } : { userId: ownerId };
+  await authRepository.storeRefreshToken(owner, refreshToken, expiresAt);
+
+  return { accessToken, refreshToken };
 }
 
 async function refresh(refreshToken: string){
