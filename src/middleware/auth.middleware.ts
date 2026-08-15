@@ -26,3 +26,19 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
         throw new UnauthorizedError('Invalid or expired token');
     }
 }
+
+// For routes that behave differently for logged-in vs anonymous users but
+// don't require auth (e.g. public meet listing that shows "you're
+// registered" when authenticated).
+export function optionalAuthenticate(req: Request, _res: Response, next: NextFunction): void {
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ')) return next();
+
+  try {
+    const payload = verifyAccessToken(header.slice('Bearer '.length));
+    req.user = { id: payload.sub, role: payload.role };
+  } catch {
+    // Invalid token on an optional route: treat as anonymous rather than erroring.
+  }
+  next();
+}
