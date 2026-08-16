@@ -19,6 +19,12 @@ const envSchema = z.object({
     OTP_TTL_SECONDS: z.coerce.number().default(300),
     OTP_LENGTH: z.coerce.number().default(6),
 
+    AWS_REGION: z.string().min(1, "AWS_REGION is required"),
+    S3_BUCKET_NAME: z.string().min(1, "S3_BUCKET_NAME is required"),
+    UPLOAD_URL_TTL_SECONDS: z.coerce.number(),
+    AWS_UPLOAD_URL_TTL_SECONDS: z.coerce.number().default(300),
+
+
     TWILIO_ACCOUNT_SID: z.string().min(1, "TWILIO_ACCOUNT_SID is required"),
     TWILIO_AUTH_TOKEN: z.string().min(1, "TWILIO_AUTH_TOKEN is required"),
     TWILIO_PHONE_NUMBER: z.string().min(1, "TWILIO_PHONE_NUMBER is required"),

@@ -10,7 +10,7 @@ router.post(
     "/request-url", 
     authenticate, 
     validate(requestUploadUrlSchema),
-    uploadsController.requestUploader
+    uploadsController.requestUploadUrl
 );
 
 export default router;
