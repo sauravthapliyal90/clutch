@@ -17,6 +17,7 @@ app.use(
 app.use(express.json({ limit: '2mb' }));
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+console.log("app me ponch gya");
 
 app.use('/api/v1', routes);
 

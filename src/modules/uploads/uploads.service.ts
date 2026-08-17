@@ -13,5 +13,7 @@ export const uploadsService = {
         const uploadUrl = await uploadsProvider.generatePresignedPutUrl(key, contentType)
 
         const publicUrl = uploadsProvider.buildPublicUrl(key);
+
+         return { uploadUrl, publicUrl };
     }
 }

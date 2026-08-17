@@ -21,7 +21,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
     const token = authHeader.split(' ')[1];
     try{
         const payload = verifyAccessToken(token);
+        console.log("auth me ponch gya");
+        
         req.user = {id: payload.sub, role: payload.role};
+        next();
     }catch(err){
         throw new UnauthorizedError('Invalid or expired token');
     }

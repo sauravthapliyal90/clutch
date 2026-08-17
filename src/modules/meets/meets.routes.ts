@@ -9,6 +9,7 @@ import { meetsController } from "./meets.controller";
 
 const router = Router();
 
+
 router.get(
     '/',
     optionalAuthenticate,
@@ -16,11 +17,11 @@ router.get(
     meetsController.list,
 );
 
-router.get(
-    '/:id',
-    optionalAuthenticate,
-    meetsController.detail,
-);
+// router.get(
+//     '/:id',
+//     optionalAuthenticate,
+//     meetsController.detail,
+// );
 
 // host only creation
 router.post(

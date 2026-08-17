@@ -5,11 +5,11 @@ import { requestUploadUrlSchema } from "./uploads.validate";
 import { uploadsController } from "./uploads.controller"
 
 const router = Router();
-
+console.log("yes")
 router.post(
     "/request-url", 
     authenticate, 
-    validate(requestUploadUrlSchema),
+    // validate(requestUploadUrlSchema),
     uploadsController.requestUploadUrl
 );
 

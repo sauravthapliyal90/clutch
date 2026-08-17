@@ -21,7 +21,7 @@ async function requestOtp(phone: string) {
    await storeOtp(phone, otp);
    console.log("otp", otp)
    const otpMessage = `Your CarMeet verification code is ${otp}. Valid for 5 minutes.`
-    await smsProvider.send(phone, otp)
+   //  await smsProvider.send(phone, otp)
 }
 
 
