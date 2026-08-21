@@ -17,7 +17,7 @@ router.post(
 router.get(
     '/mine',
     authenticate, 
-    caresController.listMine
+    carsController.listMine
 );
 
 // Admin-triggered re-verification / manual override lives in the sub-module.

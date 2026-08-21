@@ -2,7 +2,7 @@ import { prisma } from "@config/db"
 import { VerificationStatus } from "generated/prisma/enums";
 
 
-export const carRepository = {
+export const carsRepository = {
 
     create(ownerId: string, model: string, color: string, rcNumber: string){
         return prisma.car.create({data: {ownerId, model, color, rcNumber}})

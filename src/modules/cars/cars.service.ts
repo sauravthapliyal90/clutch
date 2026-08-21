@@ -1,8 +1,6 @@
 import { ConflictError, ForbiddenError, NotFoundError } from '@shared/error/ApiError';
 import { carsRepository } from './cars.repository';
-import { NotBeforeError } from 'jsonwebtoken';
-import { notFoundHandler } from '@middleware/errorHandler.middleware';
-
+import { rcVerificationQueue } from './rc-verification/rcVerification.service';
 
 export const carsService = {
 
@@ -14,7 +12,7 @@ export const carsService = {
         // via a background job so the government portal's latency/uptime never
         // becomes this endpoint's problem. See rc-verification/ sub-module.
         const car = await carsRepository.create(ownerId, model, color, rcNumber);
-        await rcVerficationQueue.enqueue(car.id);
+        await rcVerificationQueue.enqueue(car.id);
         return car;
     },
 

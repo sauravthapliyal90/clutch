@@ -14,7 +14,7 @@ export const carsController = {
 
     async listMine(req: Request, res: Response){
         if (!req.user) throw new UnauthorizedError();
-        res.json(await carsService.listMyCar(req.user.id));        
+        res.json(await carsService.listMyCars(req.user.id));        
         
     }
 }
