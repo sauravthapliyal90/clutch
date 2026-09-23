@@ -1,0 +1,219 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+enum Role {
+  USER
+  HOST
+  ADMIN
+}
+
+model User {
+  id                String   @id @default(uuid())
+  phone             String   @unique
+  name              String?
+  email             String?  @unique
+  role              Role     @default(USER)
+  isProfileComplete Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  hostProfile   HostProfile?
+  cars          Car[]
+  registrations Registration[]
+  subscriptions Subscription[]
+  refreshTokens RefreshToken[]
+
+  @@index([role])
+}
+
+// Admin is intentionally a separate table, not a User row: different trust
+// boundary, different auth mechanism (username/password only, never OTP),
+// and admins are provisioned out-of-band rather than self-registering.
+model Admin {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  refreshTokens RefreshToken[]
+}
+
+// A Host is a User who has been granted the Host role by an Admin.
+// Host authenticates via the exact same OTP flow as a regular User -
+// this table only holds Host-specific attributes, never credentials.
+model HostProfile {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id])
+  approvedBy  String?
+  approvedAt  DateTime?
+  contactInfo String?
+  meets       Meet[]
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String?
+  adminId   String?
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user  User?  @relation(fields: [userId], references: [id])
+  admin Admin? @relation(fields: [adminId], references: [id])
+
+  @@index([userId])
+  @@index([adminId])
+}
+
+// ---------- Cars ----------
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  FAILED
+}
+
+model Car {
+  id                 String              @id @default(uuid())
+  ownerId            String
+  owner              User                @relation(fields: [ownerId], references: [id])
+  name               String?
+  model              String
+  color              String
+  rcNumber           String              @unique
+  imageKey           String?
+  verificationStatus VerificationStatus  @default(PENDING)
+  verifiedAt         DateTime?
+  registrations      Registration[]
+  createdAt          DateTime            @default(now())
+
+  @@index([ownerId])
+  @@index([verificationStatus])
+}
+
+// ---------- Meets ----------
+
+enum MeetStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+model Meet {
+  id                   String      @id @default(uuid())
+  hostId               String
+  host                 HostProfile @relation(fields: [hostId], references: [id])
+  title                String
+  description          String
+  bannerImageUrl       String
+  galleryImageUrls     String[]
+  location             String
+  latitude             Float
+  longitude            Float
+  date                 DateTime
+  registrationDeadline DateTime
+  maxParticipants      Int
+  requiresVerifiedCar  Boolean     @default(false)
+  status               MeetStatus  @default(UPCOMING)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  registrations Registration[]
+
+  @@index([hostId])
+  @@index([status, date])
+  @@index([latitude, longitude])
+}
+
+// ---------- Registrations ----------
+
+enum RegistrationStatus {
+  REGISTERED
+  CANCELLED
+}
+
+model Registration {
+  id           String             @id @default(uuid())
+  meetId       String
+  meet         Meet               @relation(fields: [meetId], references: [id])
+  userId       String
+  user         User               @relation(fields: [userId], references: [id])
+  carId        String?
+  car          Car?               @relation(fields: [carId], references: [id])
+  status       RegistrationStatus @default(REGISTERED)
+  attended     Boolean            @default(false)
+  registeredAt DateTime           @default(now())
+
+  @@unique([meetId, userId])
+  @@index([meetId])
+  @@index([userId])
+}
+
+// ---------- Subscriptions & Payments ----------
+
+enum SubscriptionPlan {
+  THREE_MONTH
+  ONE_YEAR
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+model Subscription {
+  id        String             @id @default(uuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  plan      SubscriptionPlan
+  startDate DateTime
+  endDate   DateTime
+  status    SubscriptionStatus @default(ACTIVE)
+  autoRenew Boolean            @default(false)
+  payments  Payment[]
+
+  @@index([userId])
+  @@index([status, endDate])
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  subscriptionId    String
+  subscription      Subscription  @relation(fields: [subscriptionId], references: [id])
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @default("INR")
+  provider          String
+  providerPaymentId String        @unique
+  status            PaymentStatus @default(PENDING)
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+
+  @@index([subscriptionId])
+  @@index([providerPaymentId])
+}
