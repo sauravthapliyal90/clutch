@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import loginImg from "../assets/carmeetLogin.png"
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../context/AuthProvider'
 import { useNavigate } from 'react-router'
 
 function RequestOtp() {

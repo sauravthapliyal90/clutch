@@ -5,10 +5,12 @@ import {
   XIcon,
 } from "@phosphor-icons/react";
 import { Link, useNavigate } from "react-router";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthProvider";
 
 function Navbar() {
   const { user, setUser } = useAuth();
+  console.log("nav user",user);
+  
   const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);

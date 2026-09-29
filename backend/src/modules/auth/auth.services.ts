@@ -91,8 +91,10 @@ async function adminLogin(username: string, password: string) {
    logger.info(`valid ${valid}`);
    if (!valid) throw new UnauthorizedError('Invalid credentails')
       
+   const token = await issueTokenPair(admin.id, ROLES.ADMIN)
+   console.log("token", token);
    
-   return issueTokenPair(admin.id, ROLES.ADMIN)
+   return [token , {name:admin.username, role:"Admin"}]
 }
 
 async function issueTokenPair(ownerId: string, role: string) {

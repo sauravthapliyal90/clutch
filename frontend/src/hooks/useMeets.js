@@ -30,15 +30,7 @@ export function useMeetDetail(meetId) {
 }
 
 
-export function useCreateCar() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (payload) => client.post("/cars/", payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cars"] })
-    }
-  })
-}
+
 
 export function useUpload (){
   return useMutation({
@@ -53,17 +45,7 @@ export function useUpload (){
 //   })
 // }
 
-export function useCars() {
-  return useQuery({
-    queryKey: ["cars"],
-    queryFn: async () => {
-      const { data } = await client.get("/cars/mine");
-      console.log("datamut",data);
-      
-      return data; // <-- this is important
-    },
-  });
-}
+
 
 export function useCreateMeet(){
   const queryClient = useQueryClient();
@@ -74,4 +56,8 @@ export function useCreateMeet(){
     }
   })
 }
+
+
+
+
 

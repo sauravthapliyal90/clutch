@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import MeetCard from '../components/MeetCard'
 import { useForm } from "react-hook-form"
-import {  useCars, useCreateCar, useUpload } from '../hooks/useMeets'
+import {  useCars, useCreateCar } from '../hooks/useCars'
 import axios from 'axios'
 import CarCards from '../components/CarCards'
+import { useUpload } from '../hooks/useMeets'
 
 function MyGarage() {
 

@@ -20,17 +20,6 @@ function AuthLayout({
       <div className='w-full flex flex-col gap-6'>
         {children}
       </div>
-      
-      {/* <div className='text-white flex'>
-        <p className=''>{footerText+" "}</p>
-
-        <Link
-          to={footerLinkTo}
-          className="text-red-500 hover:underline"
-        >
-          {footerLinkText}
-        </Link> */}
-      {/* </div> */}
     </div>
   )
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import loginImg from "../assets/carmeetLogin.png"
 import { useNavigate } from 'react-router';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthProvider';
 
 function VerifyOtp() {
 

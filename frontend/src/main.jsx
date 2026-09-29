@@ -7,7 +7,7 @@ import Home from './pages/Home.jsx'
 import Meets from './pages/Meets.jsx'
 import MyGarage from './pages/MyGarage.jsx'
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
-import { AuthProvider } from './hooks/useAuth.jsx'
+import { AuthProvider } from './context/AuthProvider.jsx'
 import RequestOtp from './pages/RequestOtp.jsx'
 import VerifyOtp from './pages/VerifyOtp.jsx'
 import CompleteProfile from './pages/CompleteProfile.jsx'
@@ -15,6 +15,7 @@ import MeetDetail from './pages/MeetDetail.jsx'
 import "leaflet/dist/leaflet.css";
 import CreateMeets from './pages/CreateMeets.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
+import AdminLogin from './pages/AdminLogin.jsx'
 
 const router = createBrowserRouter([
   {
@@ -58,8 +59,13 @@ const router = createBrowserRouter([
         path: "/garage",
         Component: MyGarage
       }
+
     ]
-  }
+  },
+      {
+        path: "/admin",
+        Component: AdminLogin
+      }
 ])
 
 const queryClient = new QueryClient({

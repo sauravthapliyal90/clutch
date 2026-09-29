@@ -26,8 +26,10 @@ export const authController = {
         res.status(200).json(token);
     },
     async adminLogin(req: Request, res: Response){
-        const token = await authService.adminLogin(req.body.username, req.body.password);
-        res.status(200).json(token);
+        const data = await authService.adminLogin(req.body.username, req.body.password);
+        console.log(data,"data of admin log");
+        
+        res.status(200).json(data);
     }
     
 }

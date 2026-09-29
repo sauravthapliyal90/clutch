@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import loginImg from "../assets/carmeetLogin.png"
 import AuthLayout from '../components/AuthLayout';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthProvider';
 import { useNavigate } from 'react-router';
 
 function CompleteProfile() {
