@@ -1,8 +1,9 @@
 import { TrashSimpleIcon } from "@phosphor-icons/react";
+import { memo } from "react";
 
-function CarCards({ title = "MeetCard", subtitle = "Meeting details", status="pending", time = "10:00 AM", imgSrc="https://images.unsplash.com/photo-1610374634235-b51ef357f905?crop=entropy&cs=srgb&fm=jpg&q=85&w=2000"}) {
+const CarCards = memo(({ title = "MeetCard", subtitle = "Meeting details", status="pending", time = "10:00 AM", imgSrc="https://images.unsplash.com/photo-1610374634235-b51ef357f905?crop=entropy&cs=srgb&fm=jpg&q=85&w=2000"}) => {
   return (
-    <div className="w-full overflow-hidden  border border-[#27272a] bg-[#141414] shadow-md">
+    <div className="w-full overflow-hidden relative border border-[#27272a] bg-[#141414] shadow-md">
       <div className="relative h-52 overflow-hidden">
         <img
           src={imgSrc}
@@ -31,6 +32,6 @@ function CarCards({ title = "MeetCard", subtitle = "Meeting details", status="pe
       </div>
     </div>
   );
-}
+})
 
 export default CarCards;

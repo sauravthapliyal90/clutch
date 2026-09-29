@@ -38,10 +38,10 @@ function VerifyOtp() {
 
   return (
     <div className='h-[calc(100dvh-4rem)] flex overflow-hidden'>
-      <div className='w-6/12 h-full relative overflow-hidden'>
+      <div className='md:w-6/12  hidden md:block h-full relative overflow-hidden'>
         <img src={loginImg} alt="Login" className='absolute inset-0 block h-full w-full object-cover' />
       </div>
-      <div className='w-6/12 h-full overflow-hidden bg-linear-to-r from-black to-black'>
+      <div className='md:w-6/12 w-full h-full overflow-hidden bg-linear-to-r from-black to-black'>
 
         <AuthLayout title='Confirm phone number' subTitle='Join the Crew' buttonText='Continue'>
           <form className='w-full flex flex-col gap-6' onSubmit={handleSubmit}>

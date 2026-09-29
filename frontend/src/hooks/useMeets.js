@@ -64,3 +64,14 @@ export function useCars() {
     },
   });
 }
+
+export function useCreateMeet(){
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => client.post("/meets/"),
+    onSuccess : () => {
+       queryClient.invalidateQueries({queryKey:["meets"]})
+    }
+  })
+}
+

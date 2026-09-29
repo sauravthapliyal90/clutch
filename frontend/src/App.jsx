@@ -3,6 +3,7 @@ import './App.css'
 import Navbar from './components/Navbar'
 import { Outlet } from 'react-router'
 
+import {Footer} from './components/Footer'
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
      <Navbar/>
      {/* <Home/> */}
      <Outlet/>
+     <Footer/>
    </div>
     </>
   )

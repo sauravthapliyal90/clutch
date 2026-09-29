@@ -26,6 +26,14 @@ function Navbar() {
       to: user ? "/garage" : "/request-otp",
       label: "My Garage",
     },
+    {
+      to: "/create-meet",
+      label:"Create Meets"
+    },
+     {
+      to: "/dashboard",
+      label: "ADMIN",
+    },
   ];
 
   const closeMenu = () => {
@@ -55,16 +63,16 @@ function Navbar() {
           className="flex shrink-0 items-center"
         >
           <SteeringWheelIcon
-            size={32}
+            size={28}
             weight="fill"
-            className="mr-2 text-[#E21D48]"
+            className="mr-1 text-[#E21D48]"
           />
 
-          <span className="text-lg font-bold text-white">
+          <span className="lg:text-md font-extrabold text-white">
             SUPER
           </span>
 
-          <span className="text-lg font-bold text-[#E21D48]">
+          <span className="lg:text-md  font-extrabold text-[#E21D48]">
             MEET
           </span>
         </Link>
@@ -75,7 +83,7 @@ function Navbar() {
             <Link
               key={link.label}
               to={link.to}
-              className="cursor-pointer font-light text-white transition-colors duration-200 hover:text-[#E21D48]"
+              className="cursor-pointer font-light text-white transition-colors duration-200 hover:text-[#E21D48] uppercase"
             >
               {link.label}
             </Link>

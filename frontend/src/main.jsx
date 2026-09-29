@@ -13,6 +13,8 @@ import VerifyOtp from './pages/VerifyOtp.jsx'
 import CompleteProfile from './pages/CompleteProfile.jsx'
 import MeetDetail from './pages/MeetDetail.jsx'
 import "leaflet/dist/leaflet.css";
+import CreateMeets from './pages/CreateMeets.jsx'
+import AdminDashboard from './pages/AdminDashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -43,6 +45,14 @@ const router = createBrowserRouter([
       {
         path: "/meets/:id",
         Component: MeetDetail,
+      },
+      {
+        path:"/create-meet",
+        Component: CreateMeets
+      },
+      {
+        path:"/dashboard",
+        Component: AdminDashboard
       },
       {
         path: "/garage",

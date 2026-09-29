@@ -209,7 +209,7 @@ function Home() {
                   ))}
                 </div>
               ) : (
-                <div className="flex min-h-[300px] items-center justify-center rounded-lg border border-white/10 bg-white/5">
+                <div className="flex min-h-[300px] items-center justify-center border border-white/10 bg-white/5">
                   <p className="text-white/70">
                     No upcoming meets found.
                   </p>

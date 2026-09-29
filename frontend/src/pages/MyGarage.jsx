@@ -68,9 +68,9 @@ console.log("cars:", cars);
   }
 };
 
-  return (
-    <div className='h-full pb-8'>
-      <div className='px-5 py-12 flex flex-col gap-3 '>
+  return isLoading ? (<div>LOADING......</div>) : (
+    <div className='h-full mx-5 pb-8'>
+      <div className='py-12 flex flex-col gap-3 '>
         <p className='text-red-600 text-sm font-extralight tracking-[0.35em] uppercase'>SCHEDULE</p>
         <h1 className='md:text-5xl text-3xl text-white font-extrabold  uppercase'>MY GARAGE</h1>
       </div>

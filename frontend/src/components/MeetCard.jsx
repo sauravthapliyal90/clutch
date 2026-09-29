@@ -1,4 +1,8 @@
-function MeetCard({ title = "MeetCard", subtitle = "Meeting details", date = "Today", time = "10:00 AM" }) {
+import { memo } from "react";
+
+
+
+const MeetCard =memo(({ title = "MeetCard", subtitle = "Meeting details", date = "Today", time = "10:00 AM" }) => {
   return (
     <div className="w-full overflow-hidden  border border-[#27272a] bg-[#141414] shadow-md">
       <div className="relative h-52 overflow-hidden">
@@ -19,6 +23,6 @@ function MeetCard({ title = "MeetCard", subtitle = "Meeting details", date = "To
       </div>
     </div>
   );
-}
+})
 
 export default MeetCard;
