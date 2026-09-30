@@ -49,5 +49,4 @@ if (!parsed.success) {
     console.error('❌ Invalid environment variables:');
     process.exit(1);
 }
-console.log('✅ Environment variables loaded successfully', parsed);
 export const env = parsed.data;

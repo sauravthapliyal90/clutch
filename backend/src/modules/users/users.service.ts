@@ -19,7 +19,8 @@ export const usersService = {
        return toUserDto(updatedUser); 
     },
     async listUsers(query: any){
-      const {skip, take} = toSkipTake(query)  
+      const {skip, take} = toSkipTake(query)
+      console.log("skip and take of admin log --------->>>>>>",skip, take);  
       const [users, total] = await usersRepository.getAllUsers(skip, take)
       return buildPaginationResult(users.map(toUserDto), total, query)
     }

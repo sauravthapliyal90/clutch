@@ -34,7 +34,7 @@ export const authRepository = {
     },
     revokedRefreshToken(id: string){
         return prisma.refreshToken.update({
-            where: {id}, data: {revoked: true}
+            where: {id,  revoked: false,}, data: {revoked: true}
         });
     }
 }   

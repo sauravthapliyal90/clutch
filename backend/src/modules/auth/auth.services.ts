@@ -109,21 +109,46 @@ async function issueTokenPair(ownerId: string, role: string) {
 
   return { accessToken, refreshToken };
 }
+async function refresh(refreshToken: string) {
+  let payload;
 
-async function refresh(refreshToken: string){
-   let payload;
-   try {
-      payload = verifyRefreshToken(refreshToken); 
-   } catch (error) {
-      throw new UnauthorizedError('Invalid or expired refresh token');
-   }
+  try {
+    payload = verifyRefreshToken(refreshToken);
+  } catch {
+    throw new UnauthorizedError(
+      "Invalid or expired refresh token"
+    );
+  }
 
-   const stored = await authRepository.findRefreshToken(refreshToken);
-   
-   if(!stored || stored.revoked) throw new UnauthorizedError('Refresh token revoked')
+  const stored =
+    await authRepository.findRefreshToken(refreshToken);
 
-   await authRepository.revokedRefreshToken(stored.id);
-   return issueTokenPair(payload.sub, payload.role);
+  if (!stored) {
+    throw new UnauthorizedError(
+      "Refresh token not found"
+    );
+  }
+
+  if (stored.revoked) {
+    throw new UnauthorizedError(
+      "Refresh token already revoked"
+    );
+  }
+
+  const revoked =
+    await authRepository.revokedRefreshToken(stored.id);
+
+  // Another request may have revoked it first
+  if (!revoked || revoked.revoked !== true) {
+    throw new UnauthorizedError(
+      "Refresh token already used"
+    );
+  }
+
+  return issueTokenPair(
+    payload.sub,
+    payload.role
+  );
 }
 
 export const authService = {

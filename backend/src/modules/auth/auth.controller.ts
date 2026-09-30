@@ -23,11 +23,12 @@ export const authController = {
     },
     async refresh(req: Request, res:Response){
         const token = await authService.refresh(req.body.refreshToken);
+         console.log("token controller of admin log --------->>>>>>",token);
         res.status(200).json(token);
     },
     async adminLogin(req: Request, res: Response){
         const data = await authService.adminLogin(req.body.username, req.body.password);
-        console.log(data,"data of admin log");
+        console.log("data of admin controller log --------->>>>>>",data);
         
         res.status(200).json(data);
     }

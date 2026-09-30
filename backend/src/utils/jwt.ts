@@ -20,6 +20,7 @@ const accessTokenOptions: SignOptions = {
 };
 const refreshTokenOptions: SignOptions = {
   expiresIn: env.JWT_REFRESH_EXPIRES_IN as SignOptions["expiresIn"],
+     jwtid: crypto.randomUUID(),
 };
 
 export function generateAccessToken(payload: TokenPayload): string {
