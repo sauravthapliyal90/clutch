@@ -30,4 +30,21 @@ export const carsRepository = {
     findPendingVerification(take: number){
         return prisma.car.findMany({ where: {verificationStatus: 'PENDING'}, take})
     },
+
+    findCar(carId: string, userId: string){
+        return prisma.car.findFirst({
+            where: {
+                id: carId,
+                ownerId: userId,
+            },
+        })
+    },
+
+    deleteCar(carId: string){
+       return prisma.car.delete({
+      where: {
+        id: carId,
+      },
+    });
+    }
 }

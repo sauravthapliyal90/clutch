@@ -37,7 +37,7 @@ async function verifyOtpAndLogin(phone: string, otp: string) {
 
    let user = await authRepository.findUserByPhone(phone);
 
-   console.log("user.....",user)
+  //  console.log("user.....",user)
    if (!user) {
       const newUser = await authRepository.createUser(phone);
 
@@ -56,7 +56,7 @@ async function verifyOtpAndLogin(phone: string, otp: string) {
       );
       return { status: 'PROFILE_INCOMPLETE' as const, pendingProfileToken };
    }
-  console.log("yaha ponch gya")
+  // console.log("yaha ponch gya")
    return {
       status: 'LOGGED_IN',
       tokens: await issueTokenPair(user.id, user.role)
@@ -92,7 +92,7 @@ async function adminLogin(username: string, password: string) {
    if (!valid) throw new UnauthorizedError('Invalid credentails')
       
    const token = await issueTokenPair(admin.id, ROLES.ADMIN)
-   console.log("token", token);
+  //  console.log("token", token);
    
    return [token , {name:admin.username, role:"Admin"}]
 }
@@ -144,8 +144,9 @@ async function refresh(refreshToken: string) {
       "Refresh token already used"
     );
   }
-
-  return issueTokenPair(
+  console.log("Revoked----->", revoked);
+  
+  return await  issueTokenPair(
     payload.sub,
     payload.role
   );

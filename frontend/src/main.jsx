@@ -16,6 +16,7 @@ import "leaflet/dist/leaflet.css";
 import CreateMeets from './pages/CreateMeets.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import AdminLogin from './pages/AdminLogin.jsx'
+import ProtectedRoute from "./components/ProtectedRoute.jsx"
 
 const router = createBrowserRouter([
   {
@@ -47,9 +48,14 @@ const router = createBrowserRouter([
         path: "/meets/:id",
         Component: MeetDetail,
       },
-      {
-        path:"/create-meet",
-        Component: CreateMeets
+       {
+        element: <ProtectedRoute allowedRoles={["HOST", "ADMIN"]} />,
+        children: [
+          {
+            path: "/create-meet",
+            Component: CreateMeets,
+          },
+        ],
       },
       {
         path:"/dashboard",
@@ -87,5 +93,5 @@ createRoot(document.getElementById('root')).render(
         </RouterProvider>
       </AuthProvider>
     </QueryClientProvider>
-  </StrictMode>,
+  </StrictMode>
 )

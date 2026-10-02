@@ -7,6 +7,8 @@ import { getRouteParam } from "@utils/getRouteParams";
 export const meetsController = {
     async create(req: Request, res: Response) {
         if (!req.user) throw new UnauthorizedError("user not found");
+        console.log("req.body",req.body);
+        
         const meet = await meetsService.createMeet(req.user.id, req.body);
 
         res.status(200).json(meet);

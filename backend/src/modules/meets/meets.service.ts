@@ -12,6 +12,8 @@ export const meetsService = {
         const hostProfile = await hostsRepository.findByUserId(userId);
         if (!hostProfile) throw new ForbiddenError("Host profile required");
 
+
+
         return meetsRepository.create(hostProfile.id, input);
     },
 
@@ -33,8 +35,23 @@ export const meetsService = {
         const { skip, take } = toSkipTake(query);
         const [meets, total] = await meetsRepository.listPublic(skip, take, query.status);
 
+        const meetsWithImage = await Promise.all(
+            meets.map(async(meet)=>{
+                let bannerImageUrl = null
+               if(meet.bannerImageKey){
 
-        return buildPaginationResult(meets.map(toMeetDetailDto), total, query)
+                   bannerImageUrl = await uploadsProvider.generatePresignedGetUrl(meet.bannerImageKey)
+               }
+               return{
+                 ...meet,
+                bannerImageUrl
+               
+               }
+            })
+        )
+
+
+        return buildPaginationResult(meetsWithImage.map(toMeetDetailDto), total, query)
     },
 
     async listParticipants(meetId: string) {

@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import client from "../api/client";
+import client, { refreshAccessToken } from "../api/client";
 import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
@@ -50,6 +50,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setPhone(null);
     setProfileToken(null);
+    
   }, [setAuthTokens]);
 
   // Bootstrap runs once on load - separate job from client.js's interceptor,
@@ -57,6 +58,8 @@ export function AuthProvider({ children }) {
   // establishes whether there's a valid session at all before anything else runs.
   useEffect(() => {
     let cancelled = false;
+    console.log("11111111111111");
+    
 
     const bootstrapAuth = async () => {
       try {
@@ -65,19 +68,29 @@ export function AuthProvider({ children }) {
         const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
         if (!refreshToken) return;
 
-        console.log("inside effect");
+        console.log("inside effect", refreshToken);
         
-        const { data } = await client.post("/auth/refresh", { refreshToken });
+        // const { data } = await client.post("/auth/refresh", { refreshToken });
+
+        const data = await refreshAccessToken();
         if (cancelled) return;
+
          console.log("inside effect data ----->", data);
 
-        setAuthTokens(data.accessToken, data.refreshToken);
+         const decodedUser = setAuthTokens(data.accessToken, data.refreshToken);
+          console.log("inside effect decodedUser ->", decodedUser);
+         if(decodedUser.role !== "ADMIN"){
 
-        const userResponse = await client.get("/users/me");
-        console.log("inside effect userResponse ----->", userResponse);
-        if (cancelled) return;
+           const userResponse = await client.get("/users/me");
+           console.log("inside effect userResponse ----->", userResponse);
+           if (cancelled) return;
 
-        setUser(userResponse.data);
+            setUser(userResponse.data);
+          }else{
+
+            setUser(decodedUser);
+          }
+
       } catch (error) {
         if (cancelled) return;
         console.error("Authentication bootstrap failed:", error);

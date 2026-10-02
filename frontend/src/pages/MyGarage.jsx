@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import MeetCard from '../components/MeetCard'
 import { useForm } from "react-hook-form"
-import {  useCars, useCreateCar } from '../hooks/useCars'
+import {  useCars, useCreateCar, useDeleteCar } from '../hooks/useCars'
 import axios from 'axios'
 import CarCards from '../components/CarCards'
 import { useUpload } from '../hooks/useMeets'
@@ -12,6 +12,7 @@ function MyGarage() {
 
   const createCar = useCreateCar();
   const uploadFile = useUpload();
+  const deleteCar = useDeleteCar();
 
     
   const {
@@ -20,7 +21,15 @@ function MyGarage() {
   isError,
 } = useCars();
 
-console.log("cars:", cars);
+// console.log("cars:", cars);
+
+const handleDelete = async (id) => {
+  try {
+    await deleteCar.mutateAsync(id);
+  } catch (error) {
+    console.error("Failed to delete car", error);
+  }
+};
  
 
   
@@ -41,7 +50,7 @@ console.log("cars:", cars);
 
     const { uploadUrl, key } = uploadData;
 
-    console.log("upload url", uploadUrl,"  --", key);
+    // console.log("upload url", uploadUrl,"  --", key);
     
 
     // 2. Upload actual file directly to S3
@@ -150,10 +159,14 @@ console.log("cars:", cars);
         </form>
         <div className='lg:col-span-2'>
           <div className='lg:sticky top-24 flex flex-col gap-4'>
-            {cars.map((car)=>{
-              
-              return <CarCards key={car.id} title={car.name} subtitle={`${car.model}-${car.color}-${car.rcNumber}`}/>
-            })}
+            {cars.map((car)=>(
+             <CarCards 
+              key={car.id} 
+              imageUrl={car.imageUrl} 
+              onDelete={() => handleDelete(car.id)} 
+              title={car.name} 
+              subtitle={`${car.model}-${car.color}-${car.rcNumber}`}/>
+            ))}
 
           </div>
         </div>

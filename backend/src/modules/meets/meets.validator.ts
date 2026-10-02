@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const createMeetSchema = z.object({
   title: z.string().min(3).max(150),
   description: z.string().min(10),
-  bannerImageUrl: z.string().url(),
-  galleryImageUrls: z.array(z.string().url()).default([]),
+  // bannerImageUrl: z.string().url(),
+  // galleryImageUrls: z.array(z.string().url()).default([]),
   location: z.string().min(2),
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
@@ -12,6 +12,7 @@ export const createMeetSchema = z.object({
   registrationDeadline: z.coerce.date(),
   maxParticipants: z.number().int().min(1),
   requiresVerifiedCar: z.boolean().default(false),
+  bannerImageKey: z.string()
 });
 
 export const updateMeetSchema = createMeetSchema.partial();

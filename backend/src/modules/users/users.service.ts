@@ -22,6 +22,8 @@ export const usersService = {
       const {skip, take} = toSkipTake(query)
       console.log("skip and take of admin log --------->>>>>>",skip, take);  
       const [users, total] = await usersRepository.getAllUsers(skip, take)
+      
+      console.log("total and user admin log --------->>>>>>",total, users);
       return buildPaginationResult(users.map(toUserDto), total, query)
     }
 }

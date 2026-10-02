@@ -21,25 +21,47 @@ export function useHostsList(params = {}) {
   });
 }
 
-export function useApproveHost() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (input) => {
-      const res = await client.post('/admin/hosts/approve', input);
-      return res.data;
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'hosts'] }),
-  });
-}
+// export function useApproveHost() {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationFn: async (input) => {
+//       const res = await client.post('/admin/hosts/approve', input);
+//       return res.data;
+//     },
+//     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'hosts'] }),
+//   });
+// }
 
 
 
 export function useUsersList(params = {}) {
+  console.log("params", params);
   return useQuery({
     queryKey: ['user', params],
     queryFn: async () => {
       const res = await client.get('/users', { params });
+        console.log(res, "--res");
       return res.data;
+    },
+  });
+}
+
+export function useApproveHost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input) => {
+      const res = await client.post("/admin/hosts/approve", input);
+      return res.data;
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "hosts"],
+      });
     },
   });
 }

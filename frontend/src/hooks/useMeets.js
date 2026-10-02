@@ -50,7 +50,7 @@ export function useUpload (){
 export function useCreateMeet(){
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload) => client.post("/meets/"),
+    mutationFn: (payload) => client.post("/meets",payload),
     onSuccess : () => {
        queryClient.invalidateQueries({queryKey:["meets"]})
     }

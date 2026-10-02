@@ -2,6 +2,7 @@ import React from 'react'
 import Analytics from '../components/Analytics'
 import MeetForm from '../components/createMeet/MeetForm'
 import ManageMeets from '../components/createMeet/ManageMeets'
+import {useCreateMeet, useUpload} from "../hooks/useMeets"
 
 const STAT_ITEMS = [
     { key: "meets", label: "MEETS" },
@@ -12,6 +13,11 @@ const STAT_ITEMS = [
 
 function CreateMeets() {
     
+
+    const createMeet = useCreateMeet()
+    const uploadUrl = useUpload()
+    
+    
     return (
         <div className='mx-5 flex flex-col gap-6 my-10'>
             <div className='flex flex-col gap-2'>
@@ -20,9 +26,10 @@ function CreateMeets() {
             </div>
             <Analytics 
             StatItem={STAT_ITEMS}
+            className='lg:grid-cols-4'
             />
             <div className='grid lg:grid-cols-2 grid-cols-1  gap-4'>
-              <MeetForm />
+              <MeetForm createMeet={createMeet} uploadFile={uploadUrl} />
 
               <ManageMeets/>
             </div>

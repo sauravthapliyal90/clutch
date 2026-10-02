@@ -14,6 +14,9 @@ export const usersController = {
          res.json(await usersService.updateUser(req.user.id, req.body));
     },
     async list(req: Request, res: Response){
-        res.json(await usersService.listUsers(req.query as any))
+        console.log("into user Controller", req.query);
+         const {page, limit} = req.query as any;
+        
+        res.json(await usersService.listUsers({page, limit: Number(limit)}));
     }
 }

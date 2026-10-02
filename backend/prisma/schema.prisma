@@ -123,8 +123,9 @@ model Meet {
   host                 HostProfile @relation(fields: [hostId], references: [id])
   title                String
   description          String
-  bannerImageUrl       String
+  // bannerImageUrl       String
   galleryImageUrls     String[]
+  bannerImageKey       String
   location             String
   latitude             Float
   longitude            Float

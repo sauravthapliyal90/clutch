@@ -8,12 +8,14 @@ import { Link, useNavigate } from "react-router";
 import { useAuth } from "../context/AuthProvider";
 
 function Navbar() {
-  const { user, setUser } = useAuth();
+  const { user, setUser, logout } = useAuth();
   console.log("nav user",user);
   
   const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const role = user?.role?.toUpperCase();
 
   const links = [
     {
@@ -28,26 +30,32 @@ function Navbar() {
       to: user ? "/garage" : "/request-otp",
       label: "My Garage",
     },
-    {
-      to: "/create-meet",
-      label:"Create Meets"
-    },
-     {
-      to: "/dashboard",
-      label: "ADMIN",
-    },
+
+    ...(role === "HOST" || role === "ADMIN"
+    ? [
+        {
+          to: "/create-meet",
+          label: "Create Meets",
+        },
+      ]
+    : []),
+
+  // ADMIN only
+  ...(role === "ADMIN"
+    ? [
+        {
+          to: "/dashboard",
+          label: "ADMIN",
+        },
+      ]
+    : []),
   ];
 
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-    setIsMenuOpen(false);
-    navigate("/");
-  };
+ 
 
   const handleJoin = () => {
     setIsMenuOpen(false);
@@ -102,7 +110,7 @@ function Navbar() {
 
               <button
                 type="button"
-                onClick={handleLogout}
+                onClick={logout}
                 className="cursor-pointer border border-white/30 px-3 py-2 text-xs uppercase text-white transition-colors duration-200 hover:border-yellow-200 hover:bg-yellow-200 hover:text-black"
               >
                 Logout
@@ -169,7 +177,7 @@ function Navbar() {
 
                 <button
                   type="button"
-                  onClick={handleLogout}
+                  onClick={logout}
                   className="w-full border border-white/30 px-4 py-3 text-left text-sm uppercase text-white transition-colors duration-200 hover:border-yellow-200 hover:bg-yellow-200 hover:text-black"
                 >
                   Logout

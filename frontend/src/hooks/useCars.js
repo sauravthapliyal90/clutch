@@ -23,3 +23,17 @@ export function useCreateCar() {
     }
   })
 }
+
+export function useDeleteCar() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (carId) => client.delete(`/cars/${carId}`),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cars"],
+      });
+    },
+  });
+}

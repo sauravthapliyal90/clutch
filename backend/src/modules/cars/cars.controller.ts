@@ -18,5 +18,19 @@ export const carsController = {
         if (!req.user) throw new UnauthorizedError();
         res.json(await carsService.listMyCars(req.user.id));        
         
+    },
+  async deleteCar(req: Request, res: Response) {
+    if (!req.user) {
+      throw new UnauthorizedError();
     }
+
+    const id = String(req.params.id);
+
+    const result = await carsService.deleteCar(
+      id,
+      req.user.id
+    );
+
+    res.status(200).json(result);
+  },
 }

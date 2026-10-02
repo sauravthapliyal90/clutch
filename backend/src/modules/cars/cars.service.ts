@@ -29,7 +29,7 @@ export const carsService = {
 
             if (car.imageKey) {
                 imageUrl =
-                    await uploadsProvider.generatePresignedGetUrl(
+                       await uploadsProvider.generatePresignedGetUrl(
                         car.imageKey
                     );
             }
@@ -55,5 +55,25 @@ export const carsService = {
         if(car.ownerId !== userId) throw new ForbiddenError('You do not own this car');
         return car;
     },
+
+      async deleteCar(carId: string, userId: string) {
+    const car = await carsRepository.findCar(carId, userId);
+
+    if (!car) {
+      throw new Error("Car not found");
+    }
+
+    // Delete image from S3 first
+    if (car.imageKey) {
+      await uploadsProvider.deleteObject(car.imageKey);
+    }
+
+    // Delete DB record
+    await carsRepository.deleteCar(carId);
+
+    return {
+      message: "Car deleted successfully",
+    };
+  },
 
 }

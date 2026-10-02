@@ -20,6 +20,12 @@ router.get(
     carsController.listMine
 );
 
+router.delete(
+  "/:id",
+  authenticate,
+  carsController.deleteCar
+);
+
 // Admin-triggered re-verification / manual override lives in the sub-module.
 router.use('/', rcVerificationRoutes);
 
