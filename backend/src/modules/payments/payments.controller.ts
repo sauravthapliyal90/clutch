@@ -10,12 +10,14 @@ export const paymentsController = {
        res.status(201).json(result);
     },
     async verifyPayment(req: Request, res: Response){
-        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-        const result = await paymentsService.verifyPayment(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+        const { razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
+        const result = await paymentsService.verifyPayment(razorpayOrderId, razorpayPaymentId, razorpaySignature);
         res.status(200).json(result);
     },
+
     async webhook(req: Request, res: Response){
         const signature = req.headers['x-razorpay-signature'] as string;
         const result = await paymentsService.handleWebhook(req.body, signature);
+        res.status(200).json(result);
     }
 }

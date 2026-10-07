@@ -15,8 +15,6 @@ export const razorpayProvider = {
     },
 
     verifyPaymentSignature(orderId: string, paymentId: string, signature: string): boolean{
-        
-
         if (!env.RAZORPAY_KEY_SECRET) return false;
 
         const expected = crypto
@@ -26,6 +24,7 @@ export const razorpayProvider = {
 
         return expected === signature;
     },
+    
     verifyWebhookSignature(rawBody: string, signature: string):boolean{
       if(!env.RAZORPAY_KEY_SECRET) return false;
         const expected = crypto

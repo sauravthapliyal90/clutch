@@ -1,195 +1,452 @@
-import axios from 'axios';
-import React from 'react'
-import { useForm } from 'react-hook-form'
 
-function MeetForm({ createMeet, uploadFile }) {
+import axios from "axios";
+import React, { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-  const { register, handleSubmit } = useForm()
-
-  const onSubmit = async (data) => {
-    try {
-      console.log("form data:", data);
-
-      const file = data.bannerImage?.[0]
-
-      console.log("file data:", file);
-
-      if (!file) {
-        throw new Error("Banner image is required");
-      }
-      console.log("file2222 data:",);
-
-
-      const { data: uploadData } = await uploadFile.mutateAsync({
-        context: "meet-banner",
-        contentType: file.type,
-      });
-
-
-      console.log("uploaddata:", uploadData);
-      const { uploadUrl, key } = uploadData
-
-      const result = await axios.put(uploadUrl, file, {
-        headers: {
-          "Content-Type": file.type,
+function MeetForm({
+    createMeet,
+    updateMeet,
+    uploadFile,
+    editingMeet,
+    onCancelEdit,
+    loading,
+}) {
+    const {
+        register,
+        handleSubmit,
+        reset,
+        control,
+    } = useForm({
+        defaultValues: {
+            title: "",
+            location: "",
+            date: "",
+            registrationDeadline: "",
+            description: "",
+            latitude: "",
+            longitude: "",
+            maxParticipants: "",
+            bannerImage: undefined,
+            isPrivate: false,
         },
-      });
+    });
 
-      const { bannerImage, ...meetData } = data;
+    // Convert backend ISO date into datetime-local format
+    const formatDateTimeLocal = (value) => {
+        if (!value) return "";
 
-      // 4. Create meet
-      await createMeet.mutateAsync({
-        ...meetData,
-        latitude: Number(data.latitude),
-        longitude: Number(data.longitude),
-        maxParticipants: Number(data.maxParticipants),
-        bannerImageKey: key,
-      });
+        const date = new Date(value);
 
-      console.log("Meet created successfully");
-    } catch (error) {
-      console.error("Failed to create meet:", error);
-    }
-  }
+        if (Number.isNaN(date.getTime())) {
+            return "";
+        }
 
-  return (
-    <div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className='lg:col-span-3 border border-white/20 bg-[#141414] px-8 py-8 h-fit'>
-        <h1 className='uppercase text-white text-2xl font-bold'>ADD MEEt</h1>
-        <div className='py-8  flex flex-col gap-5'>
-          <div className='flex flex-col gap-2'>
+        const pad = (num) => String(num).padStart(2, "0");
 
-            <label className='text-white text-md font-light h-fit uppercase'>title</label>
-            <input
-              className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-              placeholder='FridayMeet'
-              required
-              {...register("title", { required: true })}
-            />
-          </div>
+        return `${date.getFullYear()}-${pad(
+            date.getMonth() + 1
+        )}-${pad(date.getDate())}T${pad(
+            date.getHours()
+        )}:${pad(date.getMinutes())}`;
+    };
 
-          <div className='flex flex-col gap-2'>
-            <label className='text-white text-md font-light h-fit uppercase'>Location</label>
-            <input
-              className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-              placeholder='Sector 48, Gurugram'
+    // Whenever user clicks edit,
+    // populate the form with current meet values
+    useEffect(() => {
+        if (!editingMeet) {
+            reset({
+                title: "",
+                location: "",
+                date: "",
+                registrationDeadline: "",
+                description: "",
+                latitude: "",
+                longitude: "",
+                maxParticipants: "",
+                bannerImage: undefined,
+                isPrivate: false,
+            });
 
-              {...register("location", { required: true })}
-            />
-          </div>
+            return;
+        }
 
-          <div className='flex flex-col gap-2'>
-            <label className='text-white text-md font-light h-fit uppercase'>Date</label>
-            <input
-              type='datetime-local'
-              className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-              placeholder='UK0718755'
-              {...register("date", { required: true })}
-            />
+        reset({
+            title: editingMeet.title ?? "",
+            location: editingMeet.location ?? "",
+            date: formatDateTimeLocal(editingMeet.date),
+            registrationDeadline: formatDateTimeLocal(
+                editingMeet.registrationDeadline
+            ),
+            description: editingMeet.description ?? "",
+            latitude: editingMeet.latitude ?? "",
+            longitude: editingMeet.longitude ?? "",
+            maxParticipants: editingMeet.maxParticipants ?? "",
+            bannerImage: undefined,
 
-          </div>
+            // Load existing private/public value
+            isPrivate: editingMeet.isPrivate ?? false,
+        });
+    }, [editingMeet, reset]);
 
-          <div className="flex flex-col gap-2">
-            <label className="text-white text-md font-light uppercase">
-              Registration Deadline
-            </label>
+    const onSubmit = async (data) => {
+        try {
+            // =========================
+            // EDIT EXISTING MEET
+            // =========================
+            if (editingMeet) {
+                const file = data.bannerImage?.[0];
 
-            <input
-              type="datetime-local"
-              className="px-3 py-3 text-white w-full border-[0.5px] border-white/20"
-              {...register("registrationDeadline", {
-                required: true,
-              })}
-            />
-          </div>
+                let bannerImageKey;
 
-          <div className='flex flex-col gap-2'>
-            <label className='text-white text-md font-light h-fit uppercase'>Description</label>
-            <textarea
-              type='textarea'
-              className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-              placeholder='describe'
-              {...register("description", { required: true })}
-            ></textarea>
+                // Only upload a new image if user selected one
+                if (file) {
+                    const { data: uploadData } =
+                        await uploadFile.mutateAsync({
+                            context: "meet-banner",
+                            contentType: file.type,
+                        });
 
-          </div>
-          <div className='grid grid-cols-2 gap-3'>
+                    const {
+                        uploadUrl,
+                        key,
+                    } = uploadData;
 
+                    await axios.put(uploadUrl, file, {
+                        headers: {
+                            "Content-Type": file.type,
+                        },
+                    });
 
-            <div className='flex flex-col gap-2'>
-              <label className='text-white text-md font-light h-fit uppercase'>latitude</label>
-              <input
-                type='number'
-                step="any"
-                className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-                placeholder='77.2090° E'
-                {...register("latitude", { valueAsNumber: true })}
-              />
-            </div>
+                    bannerImageKey = key;
+                }
 
-            <div className='flex flex-col gap-2'>
-              <label className='text-white text-md font-light h-fit uppercase'>longitude</label>
-              <input
-                type='number'
+                const payload = {
+                    title: data.title,
+                    location: data.location,
+                    date: data.date,
+                    registrationDeadline:
+                        data.registrationDeadline,
+                    description: data.description,
+                    latitude: Number(data.latitude),
+                    longitude: Number(data.longitude),
+                    maxParticipants: Number(
+                        data.maxParticipants
+                    ),
 
-                className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-                placeholder='28.6139° N'
-                {...register("longitude", { valueAsNumber: true })}
+                    // Send private/public status
+                    isPrivate: data.isPrivate,
+                };
 
-              />
-            </div>
-          </div>
+                // Only change image if new image uploaded
+                if (bannerImageKey) {
+                    payload.bannerImageKey = bannerImageKey;
+                }
 
-          <div className='flex flex-col gap-2'>
-            <label className='text-white text-md font-light h-fit uppercase'>Max Participants</label>
-            <input
-              type='number'
-              className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-              placeholder='10'
-              min={1}
-              {...register("maxParticipants", { required: true, valueAsNumber: true })}
-            />
-          </div>
+                await updateMeet.mutateAsync({
+                    id: editingMeet.id,
+                    payload,
+                });
 
-          <div className='flex flex-col gap-2'>
-            <label className='text-white text-md font-light h-fit uppercase'>Banner Image</label>
-            <input
-              type='file' className='px-3 py-3  placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20'
-              placeholder='hiiii'
+                console.log("Meet updated successfully");
 
-              {...register("bannerImage", { required: true })}
-            />
-          </div>
-          {/* <div className='w-full'>
-            <input
-              type="file"
-              id="imageUpload"
-              className="hidden w-full"
-              {...register("bannerImageUrl")}
-            />
+                onCancelEdit();
 
-            <label
-              htmlFor="imageUpload"
-              className="cursor-pointer px-4 py-3 border border-white/20 text-white w-full "
+                return;
+            }
+
+            // =========================
+            // CREATE NEW MEET
+            // =========================
+
+            const file = data.bannerImage?.[0];
+
+            if (!file) {
+                throw new Error("Banner image is required");
+            }
+
+            const { data: uploadData } =
+                await uploadFile.mutateAsync({
+                    context: "meet-banner",
+                    contentType: file.type,
+                });
+
+            const {
+                uploadUrl,
+                key,
+            } = uploadData;
+
+            await axios.put(uploadUrl, file, {
+                headers: {
+                    "Content-Type": file.type,
+                },
+            });
+
+            await createMeet.mutateAsync({
+                title: data.title,
+                location: data.location,
+                date: data.date,
+                registrationDeadline:
+                    data.registrationDeadline,
+                description: data.description,
+                latitude: Number(data.latitude),
+                longitude: Number(data.longitude),
+                maxParticipants: Number(
+                    data.maxParticipants
+                ),
+                bannerImageKey: key,
+
+                // Send private/public status
+                isPrivate: data.isPrivate,
+            });
+
+            console.log("Meet created successfully");
+
+            reset();
+        } catch (error) {
+            console.error(
+                editingMeet
+                    ? "Failed to update meet"
+                    : "Failed to create meet",
+                error
+            );
+        }
+    };
+
+    const isEditing = !!editingMeet;
+
+    return (
+        <div>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="lg:col-span-3 border border-white/20 bg-[#141414] px-8 py-8 h-fit"
             >
-              Upload Image
-            </label>
-          </div> */}
+                <div className="flex items-center justify-between">
+                    <h1 className="uppercase text-white text-2xl font-bold">
+                        {isEditing ? "Edit Meet" : "Add Meet"}
+                    </h1>
 
+                    {isEditing && (
+                        <button
+                            type="button"
+                            onClick={onCancelEdit}
+                            className="text-sm text-white/60 hover:text-white"
+                        >
+                            Cancel
+                        </button>
+                    )}
+                </div>
 
-          <div>
-            <button className='uppercase text-white text-sm py-4 tracking-wide font-ligth w-full bg-red-600'
-              type='submit'
-            // disabled={isSubmitting}
-            >Create Meet</button>
-          </div>
+                <div className="py-8 flex flex-col gap-5">
+
+                    {/* TITLE */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-white text-md font-light uppercase">
+                            Title
+                        </label>
+
+                        <input
+                            className="px-3 py-3 placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20"
+                            placeholder="FridayMeet"
+                            {...register("title", {
+                                required: true,
+                            })}
+                        />
+                    </div>
+
+                    {/* LOCATION */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-white text-md font-light uppercase">
+                            Location
+                        </label>
+
+                        <input
+                            className="px-3 py-3 placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20"
+                            placeholder="Sector 48, Gurugram"
+                            {...register("location", {
+                                required: true,
+                            })}
+                        />
+                    </div>
+
+                    {/* DATE */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-white text-md font-light uppercase">
+                            Date
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            className="px-3 py-3 placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20"
+                            {...register("date", {
+                                required: true,
+                            })}
+                        />
+                    </div>
+
+                    {/* REGISTRATION DEADLINE */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-white text-md font-light uppercase">
+                            Registration Deadline
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            className="px-3 py-3 text-white w-full border-[0.5px] border-white/20"
+                            {...register("registrationDeadline", {
+                                required: true,
+                            })}
+                        />
+                    </div>
+
+                    {/* DESCRIPTION */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-white text-md font-light uppercase">
+                            Description
+                        </label>
+
+                        <textarea
+                            className="px-3 py-3 placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20"
+                            placeholder="describe"
+                            {...register("description", {
+                                required: true,
+                            })}
+                        />
+                    </div>
+
+                    {/* LATITUDE / LONGITUDE */}
+                    <div className="grid grid-cols-2 gap-3">
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-white text-md font-light uppercase">
+                                Latitude
+                            </label>
+
+                            <input
+                                className="px-3 py-3 placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20"
+                                {...register("latitude", {
+                                    valueAsNumber: true,
+                                })}
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-white text-md font-light uppercase">
+                                Longitude
+                            </label>
+
+                            <input
+                                className="px-3 py-3 placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20"
+                                {...register("longitude", {
+                                    valueAsNumber: true,
+                                })}
+                            />
+                        </div>
+
+                    </div>
+
+                    {/* MAX PARTICIPANTS */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-white text-md font-light uppercase">
+                            Max Participants
+                        </label>
+
+                        <input
+                            type="number"
+                            min={1}
+                            className="px-3 py-3 placeholder:text-white/50 text-white w-full border-[0.5px] border-white/20"
+                            {...register("maxParticipants", {
+                                required: true,
+                                valueAsNumber: true,
+                            })}
+                        />
+                    </div>
+
+                    {/* BANNER IMAGE */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-white text-md font-light uppercase">
+                            Banner Image
+                        </label>
+
+                        {isEditing &&
+                            editingMeet.bannerImageUrl && (
+                                <img
+                                    src={editingMeet.bannerImageUrl}
+                                    alt={editingMeet.title}
+                                    className="w-full max-h-48 object-cover"
+                                />
+                            )}
+
+                        <input
+                            type="file"
+                            className="px-3 py-3 text-white w-full border-[0.5px] border-white/20"
+                            {...register("bannerImage")}
+                        />
+
+                        {isEditing && (
+                            <p className="text-xs text-white/50">
+                                Leave empty to keep the current image.
+                            </p>
+                        )}
+                    </div>
+
+                    {/* PRIVATE MEET TOGGLE */}
+                    <Controller
+                        name="isPrivate"
+                        control={control}
+                        render={({ field }) => (
+                            <div className="flex items-center justify-between border border-white/10 p-4">
+
+                                <div>
+                                    <p className="text-white font-medium">
+                                        Private Meet
+                                    </p>
+
+                                    <p className="text-sm text-white/50">
+                                        Only approved users can join this meet.
+                                    </p>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={field.value}
+                                    onClick={() =>
+                                        field.onChange(!field.value)
+                                    }
+                                    className={`relative h-6 w-11 rounded-full transition-colors ${
+                                        field.value
+                                            ? "bg-blue-600"
+                                            : "bg-gray-600"
+                                    }`}
+                                >
+                                    <span
+                                        className={`absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition-transform ${
+                                            field.value
+                                                ? "translate-x-5"
+                                                : "translate-x-0"
+                                        }`}
+                                    />
+                                </button>
+                            </div>
+                        )}
+                    />
+
+                    {/* SUBMIT */}
+                    <div>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="uppercase text-white text-sm py-4 tracking-wide font-light w-full bg-red-600"
+                        >
+                            {isEditing
+                                ? "Update Meet"
+                                : "Create Meet"}
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-      </form>
-    </div>
-  )
+    );
 }
 
-export default MeetForm
+export default MeetForm;

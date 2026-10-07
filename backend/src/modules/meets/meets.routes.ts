@@ -17,11 +17,16 @@ router.get(
     meetsController.list,
 );
 
-// router.get(
-//     '/:id',
-//     optionalAuthenticate,
-//     meetsController.detail,
-// );
+router.get(
+    '/:id',
+    optionalAuthenticate,
+    meetsController.detail,
+);
+
+router.get("/host/:hostId", 
+    authenticate,
+    authorize([ROLES.HOST]), 
+    meetsController.hostMeets);
 
 // host only creation
 router.post(

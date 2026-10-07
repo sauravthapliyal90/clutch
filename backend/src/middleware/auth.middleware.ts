@@ -13,6 +13,8 @@ declare global{
 
 
 export function authenticate(req: Request, res: Response, next: NextFunction): void {
+    console.log("i am here");
+    
     const authHeader = req.headers.authorization;
     if(!authHeader || !authHeader.startsWith('Bearer ')){
         throw new UnauthorizedError('Missing or invalid authorization header');

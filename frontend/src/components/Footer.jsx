@@ -31,7 +31,7 @@ const socials = [
 ];
 
 export const Footer = () => (
-  <footer data-testid="site-footer" className="relative border-t border-border bg-[#070707] mt-24">
+  <footer data-testid="site-footer" className="relative border-t border-border bg-[#070707]">
     <div className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-primary via-accent to-transparent" />
 
     <div className="max-w-7xl mx-auto px-5 py-16 grid grid-cols-1 md:grid-cols-12 gap-12">

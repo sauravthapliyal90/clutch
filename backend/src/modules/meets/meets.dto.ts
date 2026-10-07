@@ -27,6 +27,7 @@ export function toMeetDetailDto(meet: any) {
     date: meet.date,
     registrationDeadline: meet.registrationDeadline,
     maxParticipants: meet.maxParticipants,
+    meetType: meet.meetType,
     requiresVerifiedCar: meet.requiresVerifiedCar,
     status: meet.status,
     participantCount: meet._count?.registrations ?? 0,

@@ -117,6 +117,11 @@ enum MeetStatus {
   CANCELLED
 }
 
+enum MeetType {
+  PUBLIC
+  PRIVATE
+}
+
 model Meet {
   id                   String      @id @default(uuid())
   hostId               String
@@ -131,6 +136,8 @@ model Meet {
   longitude            Float
   date                 DateTime
   registrationDeadline DateTime
+  meetType             MeetType @default(PUBLIC)
+  meetPrice            String?
   maxParticipants      Int
   requiresVerifiedCar  Boolean     @default(false)
   status               MeetStatus  @default(UPCOMING)

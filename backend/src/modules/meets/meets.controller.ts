@@ -15,24 +15,42 @@ export const meetsController = {
     },
 
     async update(req: Request, res: Response) {
+        console.log("i am here");
+        
         const meetId = getRouteParam(req.params, "id")
         const meet = await meetsService.updateMeet(meetId, req.body);
-        res.json(meet)
+        res.status(200).json(meet)
     },
 
     async cancel(req: Request, res: Response){
+        console.log("inside cancel controller");
+        
         const meetId = getRouteParam(req.params, "id")
+        console.log("meetId =======> ",meetId);
+        
         const meet = await meetsService.cancelMeet(meetId);
-        res.json(meet);
+        console.log("meet",meet);
+        
+        res.status(200).json(meet);
     },
 
     async list(req: Request, res: Response){
-        res.json(await meetsService.listMeets(res.locals.query))
+        res.status(200).json(await meetsService.listMeets(res.locals.query))
     },
 
     async participants(req: Request, res: Response){
         const id = getRouteParam(req.params, "id")
-        res.json(await meetsService.listParticipants(id))
+        res.status(200).json(await meetsService.listParticipants(id))
+    },
+    async detail(req: Request, res: Response){
+         const meetId = getRouteParam(req.params,"id")
+         res.status(200).json(await meetsService.getMeetDetail(meetId))
+    },
+
+    async hostMeets(req: Request, res: Response){
+        const hostId = getRouteParam(req.params, "hostId");
+        console.log("hostId in controller------>", hostId);
+        res.status(200).json(await meetsService.listHostMeets(hostId));
     }
 }
 

@@ -12,7 +12,8 @@ export const createMeetSchema = z.object({
   registrationDeadline: z.coerce.date(),
   maxParticipants: z.number().int().min(1),
   requiresVerifiedCar: z.boolean().default(false),
-  bannerImageKey: z.string()
+  bannerImageKey: z.string(),
+  meetType: z.enum(['PUBLIC', 'PRIVATE']).default('PUBLIC'),
 });
 
 export const updateMeetSchema = createMeetSchema.partial();

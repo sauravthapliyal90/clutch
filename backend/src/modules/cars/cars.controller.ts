@@ -15,7 +15,7 @@ export const carsController = {
     },
 
     async listMine(req: Request, res: Response){
-        if (!req.user) throw new UnauthorizedError();
+        if (!req.user) throw new UnauthorizedError("user not found");
         res.json(await carsService.listMyCars(req.user.id));        
         
     },

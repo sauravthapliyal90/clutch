@@ -7,9 +7,9 @@ import {
 
 import { useMeet } from "../hooks/useMeets";
 
-const defaultCenter = [28.6139, 77.2090]; // Delhi
+ // Delhi
 
-function MeetsMap() {
+function MeetsMap({defaultCenter= [28.6139, 77.2090]}) {
   const { data, isLoading, isError } = useMeet();
 
   const meets = data?.data ?? [];

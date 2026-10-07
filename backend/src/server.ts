@@ -15,14 +15,14 @@ const server = app.listen(env.PORT, () => {
 });
 
 
-// async function gracefulShutdown(signal: string) {
-//   logger.info(`Received ${signal}, shutting down gracefully...`);
-//   server.close(async () => {
-//     await prisma.$disconnect();
-//     redis.disconnect();
-//     process.exit(0);
-//   });
-// }
+async function gracefulShutdown(signal: string) {
+  logger.info(`Received ${signal}, shutting down gracefully...`);
+  server.close(async () => {
+    await prisma.$disconnect(); 
+    redis.disconnect();
+    process.exit(0);
+  });
+}
 
-// process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-// process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

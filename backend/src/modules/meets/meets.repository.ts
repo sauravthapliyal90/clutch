@@ -34,7 +34,7 @@ export const meetsRepository = {
     listPublic(skip: number, take: number, status?: string){
         return Promise.all([
             prisma.meet.findMany({
-                where: status ? {status: status as any} : undefined,
+                where:{ status: { not:"CANCELLED"}},
                 skip,
                 take,
                 orderBy: {date: 'asc'},
@@ -51,5 +51,17 @@ export const meetsRepository = {
         include: {user: true, car: true},
         orderBy: {registeredAt: 'asc'}
      })
+    },
+
+    listHostMeets(hostId: string){
+        return prisma.hostProfile.findMany({
+            where: {userId: hostId},
+            include: {
+                meets: {
+                    orderBy: {date: 'asc'},
+                    include: { _count: {select: {registrations: true}}}
+                }
+            }
+        })
     }
 }

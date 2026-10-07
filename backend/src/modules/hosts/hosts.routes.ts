@@ -13,4 +13,5 @@ router.post('/approve', authenticate, authorize([ROLES.ADMIN]), validate(approve
 
 router.get('/', authenticate, authorize([ROLES.ADMIN]), validate(paginationSchema, 'query'), hostsController.list)
 
+
 export default router;
