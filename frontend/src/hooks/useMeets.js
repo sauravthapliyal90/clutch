@@ -7,6 +7,7 @@ import {
 import client from "../api/client";
 
 export function useMeet({ page = 1, limit = 10 } = {}) {
+    console.log("useMeet called with page:", page, "limit:", limit);
     return useQuery({
         queryKey: ["meets", { page, limit }],
 

@@ -52,10 +52,6 @@ function RequestOtp() {
               placeholder="Enter phone number"
               />
             </div>
-            {/* <div className='w-full flex flex-col gap-2'>
-            <label className='text-white text-xm font-medium uppercase tracking-widest'>Password</label>
-            <input className='px-3 py-3 text-white w-full border-[0.5px] border-white/50'/>
-            </div> */}
             <div className='w-full flex justify-center items-center mt-6'>
               <button 
               className='uppercase text-white text-sm py-4 tracking-wide font-ligth w-full bg-red-600 '

@@ -42,7 +42,7 @@ function CreateMeets() {
 
     const analyticsData = {
         meets: meets.length,
-        private: meets.filter(meet => meet.isPrivate).length,
+        private: meets.filter(meet => meet.meetType === "PRIVATE").length,
         reserve: meets.reduce((total, meet) => total + meet._count.registrations, 0) || 0,
         // verifiedCar: meets.reduce((total, meet) => total + meet.verifiedCarCount, 0)
     };

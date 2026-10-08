@@ -8,7 +8,7 @@ import MeetCard from "../components/MeetCard";
 import MeetsMap from "../components/MeetsMap";
 import { useMeet } from "../hooks/useMeets";
 
-const MEETS_PER_PAGE = 2;
+const limit = 4;
 
 function Meets() {
   const [page, setPage] = useState(1);
@@ -18,18 +18,13 @@ function Meets() {
     isLoading,
     isError,
     isFetching,
-  } = useMeet(page, MEETS_PER_PAGE);
+  } = useMeet({page, limit});
 
 
   const meets = data?.data ?? [];
-
-  console.log(meets,"===meets");
   
-  const currentPage =
-    data?.pagination?.currentPage ?? page;
-
-  const totalPages =
-    data?.pagination?.totalPages ?? 1;
+   const currentPage = data?.meta.page ?? page;
+  const totalPages = data?.meta?.totalPages ?? 1;
 
   const handlePageChange = (newPage) => {
     if (
@@ -215,7 +210,7 @@ function Meets() {
                 </div>
               )}
             </>
-          )}
+          )}  
         </div>
 
         {/* ================= MAP ================= */}

@@ -36,10 +36,80 @@ function MeetDetail() {
     const verifyPayment = useVerifyPayment();
 
 
-    // Function to handle loading Razorpay script
+  
+
+
+    // Handle loading BEFORE accessing meet
+    if (isLoading) {
+        return (
+            <div className="text-white p-6">
+                Loading...
+            </div>
+        );
+    }
+
+    if (isError || !meet) {
+        return (
+            <div className="text-white p-6">
+                Meet not found.
+            </div>
+        );
+    }
+
+    // Now it is safe to access meet
+    const {
+        title,
+        description,
+        bannerImageUrl,
+        host,
+        date,
+        location,
+        maxParticipants,
+        // _count?.registrations: participantCount,
+        status,
+        meetType
+    } = meet;
+
+    const participantCount = meet._count?.registrations ?? 0;
+    console.log(meet, "participant");
+
+    const formattedDate = date
+        ? new Date(date).toLocaleDateString()
+        : "No date";
+
+    const time = date
+        ? new Date(date).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+        })
+        : "No time";
+
+    const CARD_ICONS = [
+        {
+            name: "Date & Time",
+            detail: `${formattedDate} at ${time}`,
+            icon: CalendarBlankIcon,
+        },
+        {
+            name: "Location",
+            detail: location,
+            icon: MapPinIcon,
+        },
+        {
+            name: "Participants",
+            detail: `${participantCount}/${maxParticipants}`,
+            icon: UsersIcon,
+        },
+    ];
+
+      // Function to handle loading Razorpay script
 
 
     const handlePayment = async () => {
+        if (!user) {
+            navigate("/request-otp");
+            return;
+        }
         try {
             // 1. Load Razorpay Checkout script
             const loaded = await loadRazorpay();
@@ -132,70 +202,6 @@ function MeetDetail() {
             );
         }
     };
-
-
-    // Handle loading BEFORE accessing meet
-    if (isLoading) {
-        return (
-            <div className="text-white p-6">
-                Loading...
-            </div>
-        );
-    }
-
-    if (isError || !meet) {
-        return (
-            <div className="text-white p-6">
-                Meet not found.
-            </div>
-        );
-    }
-
-    // Now it is safe to access meet
-    const {
-        title,
-        description,
-        bannerImageUrl,
-        host,
-        date,
-        location,
-        maxParticipants,
-        // _count?.registrations: participantCount,
-        status,
-        meetType
-    } = meet;
-
-    const participantCount = meet._count?.registrations ?? 0;
-    console.log(meet, "participant");
-
-    const formattedDate = date
-        ? new Date(date).toLocaleDateString()
-        : "No date";
-
-    const time = date
-        ? new Date(date).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-        })
-        : "No time";
-
-    const CARD_ICONS = [
-        {
-            name: "Date & Time",
-            detail: `${formattedDate} at ${time}`,
-            icon: CalendarBlankIcon,
-        },
-        {
-            name: "Location",
-            detail: location,
-            icon: MapPinIcon,
-        },
-        {
-            name: "Participants",
-            detail: `${participantCount}/${maxParticipants}`,
-            icon: UsersIcon,
-        },
-    ];
 
     const handleRSVP = async () => {
         if (!user) {

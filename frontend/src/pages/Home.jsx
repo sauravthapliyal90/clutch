@@ -40,12 +40,13 @@ function Home() {
     isLoading,
     isError,
     isFetching,
-  } = useMeet(page, MEETS_PER_PAGE);
+  } = useMeet({page, limit: MEETS_PER_PAGE});
 
   const meets = data?.data ?? [];
+  console.log(data,"===data");
 
-  const currentPage = data?.pagination?.currentPage ?? page;
-  const totalPages = data?.pagination?.totalPages ?? 1;
+  const currentPage = data?.meta.page ?? page;
+  const totalPages = data?.meta?.totalPages ?? 1;
 
   const handlePageChange = (newPage) => {
     if (

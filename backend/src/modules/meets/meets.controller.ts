@@ -35,7 +35,10 @@ export const meetsController = {
     },
 
     async list(req: Request, res: Response){
-        res.status(200).json(await meetsService.listMeets(res.locals.query))
+        console.log("res.locals.query",res.locals.query);
+        const result = await meetsService.listMeets(res.locals.query);
+        console.log("result in controller------>", result);
+        res.status(200).json(result)
     },
 
     async participants(req: Request, res: Response){

@@ -14,14 +14,19 @@ function CompleteProfile() {
     const navigate = useNavigate()
 
    const handleSubmit = async(e) =>{
+
     e.preventDefault();
+   
     try {
+       setIsSubmitting(true);
         const data = await completeProfile({name, email})
 
         console.log("data",data);
         navigate("/")
     } catch (error) {
         console.log("error",error);
+    }finally{
+        setIsSubmitting(false);
     }
    }
 
@@ -44,7 +49,7 @@ function CompleteProfile() {
               onChange={(e) => setName(e.target.value)}
               type="inpute"
               required 
-              placeholder="Enter phone number"
+              placeholder="Enter your name"
               />
             </div>
             <div className='w-full flex flex-col gap-2'>
@@ -55,6 +60,7 @@ function CompleteProfile() {
               onChange={(e) => setEmail(e.target.value)}
               type="inpute"
               required 
+              placeholder="Enter your email"
             />
             </div>
             <div className='w-full flex justify-center items-center mt-6'>
